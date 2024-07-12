@@ -1,5 +1,6 @@
 import express from 'express';
 import sequelize from './config/db'
+import Country from './models/country'
 import dotenv from 'dotenv';
 
 // Load environment variables from .env file
@@ -18,8 +19,8 @@ app.get('/', (req, res) => {
     console.log('DB Connection has been established successfully.');
 
     // // Synchronize models
-    // await sequelize.sync({ force: true }); // Use force: true to drop and recreate tables
-    // console.log('All models were synchronized successfully.');
+    await sequelize.sync({ force: true }); // Use force: true to drop and recreate tables
+    console.log('All models were synchronized successfully.');
 
     // Start the server
     app.listen(PORT, () => {
