@@ -1,6 +1,6 @@
 import express from 'express';
-import sequelize from './config/db'
-import Country from './models/country'
+import sequelize from './config/db';
+import Country from './models/country'; // Ensure the path is correct
 import dotenv from 'dotenv';
 
 // Load environment variables from .env file
@@ -18,8 +18,12 @@ app.get('/', (req, res) => {
     await sequelize.authenticate();
     console.log('DB Connection has been established successfully.');
 
-    // // Synchronize models
-    await sequelize.sync({ force: true }); // Use force: true to drop and recreate tables
+    // Explicitly synchronize the Country model
+    await Country.sync({ force: true, logging: console.log });
+    console.log('Country model synchronized successfully.');
+
+    // Synchronize all models
+    await sequelize.sync({ force: true, logging: console.log }); // Enable logging to see SQL queries
     console.log('All models were synchronized successfully.');
 
     // Start the server
@@ -30,3 +34,4 @@ app.get('/', (req, res) => {
     console.error('Unable to connect to the database:', error);
   }
 })();
+
