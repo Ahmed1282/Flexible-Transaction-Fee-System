@@ -1,7 +1,6 @@
 import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
 
-// Load environment variables from .env file
 dotenv.config();
 
 const sequelize = new Sequelize(
@@ -10,10 +9,12 @@ const sequelize = new Sequelize(
   process.env.DB_PASSWORD as string,
   {
     host: process.env.DB_HOST,
-    dialect: process.env.DB_DIALECT as 'postgres', // Ensure the dialect is of the correct type
-    logging: false,
+    dialect: process.env.DB_DIALECT as any,
+    logging: console.log, // Enable logging to see SQL queries
   }
 );
 
-// Export the sequelize instance to be used in models and elsewhere
+// sequelize.authenticate();
+//     console.log('DB Connection has been established successfully.');
+
 export default sequelize;
