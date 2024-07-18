@@ -34,8 +34,8 @@ AppDataSource.initialize()
     console.log('All models were synchronized successfully.');
 
     app.use('/jurisdictions', jurisdictionRoutes);
-    app.use('/api', countryRoutes);
-    app.use('/api', promotionRoutes);
+    app.use('/country', countryRoutes);
+    app.use('/promotions', promotionRoutes);
 
     app.get('/', (req, res) => {
       res.send('Hello, World!');

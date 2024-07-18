@@ -4,10 +4,10 @@ import { validatePromotion } from '../middleware/promotionValidators';
 
 const router = Router();
 
-router.post('/promotions', validatePromotion, promotionController.createPromotion);
-router.get('/promotions', promotionController.getAllPromotions);
-router.get('/promotions/:id', promotionController.getPromotionById);
-router.put('/promotions/:id', validatePromotion, promotionController.updatePromotion);
-router.delete('/promotions/:id', promotionController.deletePromotion);
+router.post('/create', validatePromotion, promotionController.createPromotion);
+router.get('/getAll', promotionController.getAllPromotions);
+router.get('/get/:id', promotionController.getPromotionById);
+router.put('/update/:id', validatePromotion, promotionController.updatePromotion);
+router.delete('/delete/:id', promotionController.deletePromotion);
 
 export default router;
