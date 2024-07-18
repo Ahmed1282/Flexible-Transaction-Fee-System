@@ -22,6 +22,10 @@
 
 import { DataSource } from 'typeorm';
 import { Billing } from '../models/billing';
+import { Country } from '../models/country';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const AppDataSource = new DataSource({
   type: 'postgres',
@@ -30,7 +34,7 @@ const AppDataSource = new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [Billing],
+  entities: [Country],
   synchronize: true,
   logging: true,
 });

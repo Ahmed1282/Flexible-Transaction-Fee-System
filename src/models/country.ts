@@ -1,63 +1,33 @@
-import { Model, DataTypes } from 'sequelize';
-import sequelize from '../config/db'; // Adjust the path as necessary
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-class Country extends Model {
-  public country_id!: number;
-  public country_UserFeeShare!: number;
-  public country_tax!: number;
-  public country_discount!: object;
-  public country_buy_margin!: number;
-  public country_sell_margin!: number;
-  public country_FassetFee!: number;
-  public country_dinariConstantFee!: number;
-  public country_dinariPercentageFee!: number;
+@Entity()
+export class Country {
+  @PrimaryGeneratedColumn()
+  country_id!: number;
+
+  @Column('float')
+  country_UserFeeShare!: number;
+
+  @Column('float')
+  country_tax!: number;
+
+  @Column('json', { nullable: true })
+  country_discount!: object;
+
+  @Column('float')
+  country_buy_margin!: number;
+
+  @Column('float')
+  country_sell_margin!: number;
+
+  @Column('float')
+  country_FassetFee!: number;
+
+  @Column('float')
+  country_dinariConstantFee!: number;
+
+  @Column('float')
+  country_dinariPercentageFee!: number;
 }
-
-Country.init(
-  {
-    country_id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    country_UserFeeShare: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-    country_tax: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-    country_discount: {
-      type: DataTypes.JSON,
-      allowNull: true,
-    },
-    country_buy_margin: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-    country_sell_margin: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-    country_FassetFee: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-    country_dinariConstantFee: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-    country_dinariPercentageFee: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-  },
-  {
-    sequelize,
-    tableName: 'Country',
-    timestamps: true,
-  }
-);
 
 export default Country;
