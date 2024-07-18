@@ -34,6 +34,20 @@ class CountryController {
     }
   }
 
+  async getCountryByName(req: Request, res: Response) {
+    try {
+      const countryName = req.params.name; // Assuming you're passing the country name as a parameter
+      const country = await countryService.getCountryByName(countryName);
+      if (!country) {
+        res.status(StatusCodes.NOT_FOUND).json({ error: 'Country not found' });
+      } else {
+        res.status(StatusCodes.OK).json(country);
+      }
+    } catch (error) {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'Internal Server Error' });
+    }
+  }
+
   async updateCountry(req: Request, res: Response) {
     try {
       const country = await countryService.updateCountry(Number(req.params.id), req.body);

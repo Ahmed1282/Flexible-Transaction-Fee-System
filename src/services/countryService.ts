@@ -35,6 +35,10 @@ class CountryService {
     const result = await this.countryRepository.delete({ country_id: id });
     return result.affected !== 0;
   }
+
+  async getCountryByName(name: string): Promise<Country | null> {
+      return await this.countryRepository.findOneBy({ country_name: name  });
+  }
 }
 
 export default new CountryService();

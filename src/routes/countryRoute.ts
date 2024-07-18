@@ -7,6 +7,7 @@ const router = Router();
 router.post('/countries', validateCountry, countryController.createCountry);
 router.get('/countries', countryController.getAllCountries);
 router.get('/countries/:id', countryController.getCountryById);
+router.get('/countries/name/:name', countryController.getCountryByName);
 router.put('/countries/:id', validateCountry, countryController.updateCountry);
 router.delete('/countries/:id', countryController.deleteCountry);
 

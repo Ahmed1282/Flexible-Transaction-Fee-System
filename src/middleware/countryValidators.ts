@@ -3,6 +3,7 @@ import { check, validationResult } from 'express-validator';
 import { StatusCodes } from 'http-status-codes';
 
 export const validateCountry = [
+  check('country_name').notEmpty().withMessage('Country name cannot be empty'),  
   check('country_UserFeeShare').isFloat().withMessage('User Fee Share must be a float'),
   check('country_tax').isFloat().withMessage('Tax must be a float'),
   check('country_buy_margin').isFloat().withMessage('Buy margin must be a float'),
