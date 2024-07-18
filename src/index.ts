@@ -3,8 +3,10 @@ import express from 'express';
 import sequelize from './config/db';
 import AppDataSource from './config/db';
 import {Country} from './models/country'; 
+import {Promotion} from './models/promotion'; 
 import { Jurisdiction } from './models/jurisdiction';// Ensure the path is correct
 import countryRoutes from './routes/countryRoute';
+import promotionRoutes from './routes/promotionRoute';
 import dotenv from 'dotenv';
 // import Jurisdiction from './models/jurisdiction';
 
@@ -29,6 +31,9 @@ AppDataSource.initialize()
     
     // Use the country routes
     app.use('/api', countryRoutes);
+
+     // Use the promotion routes
+     app.use('/api', promotionRoutes);
 
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
