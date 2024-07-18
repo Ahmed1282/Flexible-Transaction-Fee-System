@@ -12,6 +12,10 @@ export class JurisdictionService {
     return this.jurisdictionRepository.findOneBy({ id });
   }
 
+  async getJurisdictionByName(name: string): Promise<Jurisdiction | null> {
+    return this.jurisdictionRepository.findOne({ where: { jurisdiction_name: name } });
+  }
+
   async createJurisdiction(data: Partial<Jurisdiction>): Promise<Jurisdiction> {
     const newJurisdiction = this.jurisdictionRepository.create(data);
     return this.jurisdictionRepository.save(newJurisdiction);

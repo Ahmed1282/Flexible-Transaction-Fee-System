@@ -1,69 +1,106 @@
 import { Request, Response } from 'express';
 import { JurisdictionService } from '../services/jurisdictionService';
+import { StatusCodes } from 'http-status-codes';
 
 const jurisdictionService = new JurisdictionService();
 
-// Get all jurisdictions
-export const getAllJurisdictions = async (req: Request, res: Response) => {
+export const getAllJurisdictions = async (req: Request, res: Response): Promise<void> => {
   try {
     const jurisdictions = await jurisdictionService.getAllJurisdictions();
-    res.json(jurisdictions);
+    res.status(StatusCodes.OK).json(jurisdictions);
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    if (error instanceof Error) {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'An unknown error occurred' });
+    }
   }
 };
 
-// Get a jurisdiction by ID
-export const getJurisdictionById = async (req: Request, res: Response) => {
-  const { id } = req.params;
+export const getJurisdictionById = async (req: Request, res: Response): Promise<void> => {
   try {
-    const jurisdiction = await jurisdictionService.getJurisdictionById(parseInt(id));
+    const { id } = req.params;
+    const jurisdiction = await jurisdictionService.getJurisdictionById(Number(id));
     if (jurisdiction) {
-      res.json(jurisdiction);
+      res.status(StatusCodes.OK).json(jurisdiction);
     } else {
-      res.status(404).json({ error: 'Jurisdiction not found' });
+      res.status(StatusCodes.NOT_FOUND).json({ message: 'Jurisdiction not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
-
-// Create a new jurisdiction
-export const createJurisdiction = async (req: Request, res: Response) => {
-  try {
-    const jurisdiction = await jurisdictionService.createJurisdiction(req.body);
-    res.status(201).json(jurisdiction);
-  } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
-
-// Update a jurisdiction
-export const updateJurisdiction = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  try {
-    const jurisdiction = await jurisdictionService.updateJurisdiction(parseInt(id), req.body);
-    if (jurisdiction) {
-      res.json(jurisdiction);
+    if (error instanceof Error) {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
     } else {
-      res.status(404).json({ error: 'Jurisdiction not found' });
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'An unknown error occurred' });
+    }
+  }
+};
+
+
+export const getJurisdictionByName = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { name } = req.params;
+      const jurisdiction = await jurisdictionService.getJurisdictionByName(name);
+      if (jurisdiction) {
+        res.status(StatusCodes.OK).json(jurisdiction);
+      } else {
+        res.status(StatusCodes.NOT_FOUND).json({ message: 'Jurisdiction not found' });
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+      } else {
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'An unknown error occurred' });
+      }
+    }
+  };
+
+export const createJurisdiction = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const data = req.body;
+    const jurisdiction = await jurisdictionService.createJurisdiction(data);
+    res.status(StatusCodes.CREATED).json(jurisdiction);
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'An unknown error occurred' });
+    }
+  }
+};
+
+export const updateJurisdiction = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const data = req.body;
+    const jurisdiction = await jurisdictionService.updateJurisdiction(Number(id), data);
+    if (jurisdiction) {
+      res.status(StatusCodes.OK).json(jurisdiction);
+    } else {
+      res.status(StatusCodes.NOT_FOUND).json({ message: 'Jurisdiction not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    if (error instanceof Error) {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'An unknown error occurred' });
+    }
   }
 };
 
-// Delete a jurisdiction
-export const deleteJurisdiction = async (req: Request, res: Response) => {
-  const { id } = req.params;
+export const deleteJurisdiction = async (req: Request, res: Response): Promise<void> => {
   try {
-    const success = await jurisdictionService.deleteJurisdiction(parseInt(id));
+    const { id } = req.params;
+    const success = await jurisdictionService.deleteJurisdiction(Number(id));
     if (success) {
-      res.status(204).send();
+      res.status(StatusCodes.NO_CONTENT).end();
     } else {
-      res.status(404).json({ error: 'Jurisdiction not found' });
+      res.status(StatusCodes.NOT_FOUND).json({ message: 'Jurisdiction not found' });
     }
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    if (error instanceof Error) {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: error.message });
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: 'An unknown error occurred' });
+    }
   }
 };

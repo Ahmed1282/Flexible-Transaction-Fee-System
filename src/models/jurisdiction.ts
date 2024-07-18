@@ -10,6 +10,9 @@ import {
   export class Jurisdiction {
     @PrimaryGeneratedColumn()
     id!: number;
+
+    @Column()
+    jurisdiction_name!: string;
   
     @Column('float')
     UserFeeShare!: number;
