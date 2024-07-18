@@ -2,9 +2,11 @@ import 'reflect-metadata';
 import express from 'express';
 import AppDataSource from './config/db';
 import {Country} from './models/country'; 
+import {Promotion} from './models/promotion'; 
 import { Jurisdiction } from './models/jurisdiction';// Ensure the path is correct
 import countryRoutes from './routes/countryRoute';
 import jurisdictionRoutes from './routes/jurisdictionRoutes';
+import promotionRoutes from './routes/promotionRoute';
 import dotenv from 'dotenv';
 // import Jurisdiction from './models/jurisdiction';
 
@@ -33,6 +35,7 @@ AppDataSource.initialize()
 
     app.use('/jurisdictions', jurisdictionRoutes);
     app.use('/api', countryRoutes);
+    app.use('/api', promotionRoutes);
 
     app.get('/', (req, res) => {
       res.send('Hello, World!');
