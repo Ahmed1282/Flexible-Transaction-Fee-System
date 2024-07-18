@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
 import AppDataSource from '../config/db';
-import { Billing } from '../entities/billing';
+import { Billing } from '../models/billing';
 
 class BillingService {
   private billingRepository: Repository<Billing>;

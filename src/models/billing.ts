@@ -1,25 +1,31 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Country } from './country';
+import { Jurisdiction } from './jurisdiction';
+import { Promotion } from './promotion';
 
 @Entity()
 export class Billing {
   @PrimaryGeneratedColumn()
-  billing_id: number;
+  billing_id!: number;
 
   @Column()
-  user_id: number;
+  user_id!: number;  // this will come from the API
 
-  @Column()
-  country_id: number;
+  @ManyToOne(() => Country)
+  @JoinColumn({ name: 'country_id' })
+  country!: Country;
 
-  @Column()
-  jurisdictions_id: number;
+  @ManyToOne(() => Jurisdiction)
+  @JoinColumn({ name: 'jurisdictions_id' })
+  jurisdiction!: Jurisdiction;
 
-  @Column({ nullable: true })
-  promotion_id: number;
+  @ManyToOne(() => Promotion, { nullable: true })
+  @JoinColumn({ name: 'promotion_id' })
+  promotion!: Promotion | null;
 
   @Column('float')
-  billing_fee: number;
+  billing_fee!: number;
 
   @Column()
-  event_type: string;
+  event_type!: string;  // will be 'buy' or 'sell' from the URL
 }

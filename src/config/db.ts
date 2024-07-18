@@ -21,8 +21,10 @@
 
 
 import { DataSource } from 'typeorm';
-import { Billing } from '../models/billing';
+import { Jurisdiction } from '../models/jurisdiction';
+// import { Billing } from '../models/billing';
 import { Country } from '../models/country';
+import { Promotion } from '../models/promotion';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -34,7 +36,7 @@ const AppDataSource = new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [Country],
+  entities: [Jurisdiction, Country, Promotion],
   synchronize: true,
   logging: true,
 });

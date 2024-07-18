@@ -1,7 +1,8 @@
 import express from 'express';
 import sequelize from './config/db';
 import AppDataSource from './config/db';
-import Country from './models/country'; // Ensure the path is correct
+import {Country} from './models/country'; 
+import { Jurisdiction } from './models/jurisdiction';// Ensure the path is correct
 import dotenv from 'dotenv';
 // import Jurisdiction from './models/jurisdiction';
 
