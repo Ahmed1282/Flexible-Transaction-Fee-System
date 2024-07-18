@@ -1,11 +1,11 @@
 import 'reflect-metadata';
 import express from 'express';
-import sequelize from './config/db';
 import AppDataSource from './config/db';
 import {Country} from './models/country'; 
 import {Promotion} from './models/promotion'; 
 import { Jurisdiction } from './models/jurisdiction';// Ensure the path is correct
 import countryRoutes from './routes/countryRoute';
+import jurisdictionRoutes from './routes/jurisdictionRoutes';
 import promotionRoutes from './routes/promotionRoute';
 import dotenv from 'dotenv';
 // import Jurisdiction from './models/jurisdiction';
@@ -26,23 +26,26 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 AppDataSource.initialize()
-  .then(() => {
-    console.log('Data Source has been initialized!');
-    
-    // Use the country routes
-    app.use('/api', countryRoutes);
+  .then(async () => {
+    console.log('DB Connection has been established successfully.');
 
-     // Use the promotion routes
-     app.use('/api', promotionRoutes);
+    // Synchronize models
+    await AppDataSource.synchronize();
+    console.log('All models were synchronized successfully.');
+
+    app.use('/jurisdictions', jurisdictionRoutes);
+    app.use('/api', countryRoutes);
+    app.use('/api', promotionRoutes);
+
+    app.get('/', (req, res) => {
+      res.send('Hello, World!');
+    });
 
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
   })
-  .catch((err) => {
-    console.error('Error during Data Source initialization:', err);
-  });
-
+  .catch((error) => console.error('Unable to connect to the database:', error));
 
 // app.get('/api', async (req, res) => {
 //   const result = await Jurisdictions.create({UserFeeShare: 100 , tax: 2,
