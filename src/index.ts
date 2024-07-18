@@ -1,8 +1,10 @@
+import 'reflect-metadata';
 import express from 'express';
 import sequelize from './config/db';
 import AppDataSource from './config/db';
 import {Country} from './models/country'; 
 import { Jurisdiction } from './models/jurisdiction';// Ensure the path is correct
+import countryRoutes from './routes/countryRoute';
 import dotenv from 'dotenv';
 // import Jurisdiction from './models/jurisdiction';
 
@@ -24,6 +26,10 @@ app.use(express.json());
 AppDataSource.initialize()
   .then(() => {
     console.log('Data Source has been initialized!');
+    
+    // Use the country routes
+    app.use('/api', countryRoutes);
+
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
