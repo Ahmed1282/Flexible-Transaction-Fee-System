@@ -3,8 +3,11 @@ import {
     PrimaryGeneratedColumn,
     Column,
     CreateDateColumn,
-    UpdateDateColumn
+    UpdateDateColumn,
+    ManyToOne,
+    JoinColumn
   } from 'typeorm';
+  import { Discount } from './discount';
   
   @Entity()
   export class Jurisdiction {
@@ -37,6 +40,10 @@ import {
   
     @Column('float')
     dinariPercentageFee!: number;
+
+    @ManyToOne(() => Discount, { nullable: true })
+    @JoinColumn({ name: 'discount_Id' })
+    discount_Id!: Discount;
   
     @CreateDateColumn()
     createdAt!: Date;

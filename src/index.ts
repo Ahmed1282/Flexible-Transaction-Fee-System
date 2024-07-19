@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import express from 'express';
 import AppDataSource from './config/db';
-import {Country} from './models/country'; 
+import { Country } from './models/country'; 
 import {Promotion} from './models/promotion'; 
 import { Jurisdiction } from './models/jurisdiction';// Ensure the path is correct
 import countryRoutes from './routes/countryRoute';

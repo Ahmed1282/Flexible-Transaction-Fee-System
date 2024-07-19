@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn,UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn
+} from 'typeorm';
+import { Discount } from './discount';
 
 @Entity()
 export class Country {
@@ -31,6 +40,10 @@ export class Country {
 
   @Column('float')
   country_dinariPercentageFee!: number;
+
+  @ManyToOne(() => Discount, { nullable: true })
+  @JoinColumn({ name: 'discount_Id' })
+  discount_Id!: Discount;
 
   @CreateDateColumn()
   createdAt!: Date;
