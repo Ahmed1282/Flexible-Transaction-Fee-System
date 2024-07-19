@@ -7,6 +7,7 @@ import { Jurisdiction } from './models/jurisdiction';// Ensure the path is corre
 import countryRoutes from './routes/countryRoute';
 import jurisdictionRoutes from './routes/jurisdictionRoutes';
 import promotionRoutes from './routes/promotionRoute';
+import discountRoutes from './routes/discountRoutes'
 import dotenv from 'dotenv';
 // import Jurisdiction from './models/jurisdiction';
 
@@ -36,6 +37,7 @@ AppDataSource.initialize()
     app.use('/jurisdictions', jurisdictionRoutes);
     app.use('/country', countryRoutes);
     app.use('/promotions', promotionRoutes);
+    app.use('/discounts', discountRoutes)
 
     app.get('/', (req, res) => {
       res.send('Hello, World!');
