@@ -25,6 +25,7 @@ import { Jurisdiction } from '../models/jurisdiction';
 // import { Billing } from '../models/billing';
 import { Country } from '../models/country';
 import { Promotion } from '../models/promotion';
+import { Discount } from '../models/discount'
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -36,7 +37,7 @@ const AppDataSource = new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [Jurisdiction, Country, Promotion],
+  entities: [Jurisdiction, Country, Promotion, Discount],
   synchronize: true,
   logging: true,
 });
