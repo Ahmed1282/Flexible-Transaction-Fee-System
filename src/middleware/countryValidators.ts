@@ -10,7 +10,19 @@ export const validateCountry = [
   check('country_sell_margin').isFloat().withMessage('Sell margin must be a float'),
   check('country_FassetFee').isFloat().withMessage('Fasset Fee must be a float'),
   check('country_dinariConstantFee').isFloat().withMessage('Dinari Constant Fee must be a float'),
-  check('country_dinariPercentageFee').isFloat().withMessage('Dinari Percentage Fee must be a float'),
+  check('country_discount')
+    .optional()
+    .isObject().withMessage('Country discount must be an object')
+    .custom((value) => {
+      if (!value.name || typeof value.name !== 'string') {
+        throw new Error('Country discount must have a name property of type string');
+      }
+      if (!value.value || typeof value.value !== 'number') {
+        throw new Error('Country discount must have a value property of type number');
+      }
+      return true;
+    }),
+    check('country_discount_applied').isFloat().withMessage('Jurisdiction discount applied must be a float'),
   
   (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
