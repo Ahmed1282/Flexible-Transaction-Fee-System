@@ -1,8 +1,10 @@
-import AppDataSource  from '../config/db';
+import AppDataSource from '../config/db';
 import { Jurisdiction } from '../models/jurisdiction';
+import { Discount } from '../models/discount';
 
 export class JurisdictionService {
   private jurisdictionRepository = AppDataSource.getRepository(Jurisdiction);
+  private discountRepository = AppDataSource.getRepository(Discount);
 
   async getAllJurisdictions(): Promise<Jurisdiction[]> {
     return this.jurisdictionRepository.find();
@@ -12,19 +14,40 @@ export class JurisdictionService {
     return this.jurisdictionRepository.findOneBy({ id });
   }
 
-  async getJurisdictionByName(name: string): Promise<Jurisdiction | null> {
-    return this.jurisdictionRepository.findOne({ where: { jurisdiction_name: name } });
-  }
-
   async createJurisdiction(data: Partial<Jurisdiction>): Promise<Jurisdiction> {
-    const newJurisdiction = this.jurisdictionRepository.create(data);
-    return this.jurisdictionRepository.save(newJurisdiction);
+    const jurisdiction = this.jurisdictionRepository.create(data);
+    const discount = await this.discountRepository.findOneBy({ discount_Id: data.discount_Id?.discount_Id });
+
+    if (discount && data.jurisdiction_discount) {
+      jurisdiction.juris_discount_applied = Math.max(discount.discount_percentage, data.jurisdiction_discount.percentage);
+    } else if (discount) {
+      jurisdiction.juris_discount_applied = discount.discount_percentage;
+    } else if (data.jurisdiction_discount) {
+      jurisdiction.juris_discount_applied = data.jurisdiction_discount.percentage;
+    } else {
+      jurisdiction.juris_discount_applied = 0;
+    }
+
+    return this.jurisdictionRepository.save(jurisdiction);
   }
 
   async updateJurisdiction(id: number, data: Partial<Jurisdiction>): Promise<Jurisdiction | null> {
     const jurisdiction = await this.jurisdictionRepository.findOneBy({ id });
     if (jurisdiction) {
       this.jurisdictionRepository.merge(jurisdiction, data);
+
+      const discount = await this.discountRepository.findOneBy({ discount_Id: data.discount_Id?.discount_Id });
+
+      if (discount && data.jurisdiction_discount) {
+        jurisdiction.juris_discount_applied = Math.min(discount.discount_percentage, data.jurisdiction_discount.percentage);
+      } else if (discount) {
+        jurisdiction.juris_discount_applied = discount.discount_percentage;
+      } else if (data.jurisdiction_discount) {
+        jurisdiction.juris_discount_applied = data.jurisdiction_discount.percentage;
+      } else {
+        jurisdiction.juris_discount_applied = 0;
+      }
+
       return this.jurisdictionRepository.save(jurisdiction);
     }
     return null;
