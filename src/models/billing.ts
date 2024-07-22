@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
 import { Country } from './country';
 import { Jurisdiction } from './jurisdiction';
 import { Promotion } from './promotion';
+import { Discount } from './discount';
 
 @Entity()
 export class Billing {
@@ -11,17 +12,21 @@ export class Billing {
   @Column()
   user_id!: number;  // this will come from the API
 
-  @ManyToOne(() => Country)
+  @OneToOne(() => Country, { nullable: true })
   @JoinColumn({ name: 'country_id' })
-  country!: Country;
+  country!: Country | null;
 
-  @ManyToOne(() => Jurisdiction)
+  @OneToOne(() => Jurisdiction, { nullable: true })
   @JoinColumn({ name: 'jurisdictions_id' })
-  jurisdiction!: Jurisdiction;
+  jurisdiction!: Jurisdiction | null;
 
-  @ManyToOne(() => Promotion, { nullable: true })
+  @OneToOne(() => Promotion, { nullable: true })
   @JoinColumn({ name: 'promotion_id' })
   promotion!: Promotion | null;
+
+  @OneToOne(() => Discount, { nullable: true })
+  @JoinColumn({ name: 'discount_id' })
+  discount!: Discount | null;
 
   @Column('float')
   billing_fee!: number;
