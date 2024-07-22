@@ -13,7 +13,7 @@ import {
   export class Jurisdiction {
     @PrimaryGeneratedColumn()
     id!: number;
-
+  
     @Column()
     jurisdiction_name!: string;
   
@@ -23,8 +23,8 @@ import {
     @Column('float')
     tax!: number;
   
-    @Column('json')
-    discount!: object;
+    @Column('json', { nullable: true })
+    jurisdiction_discount!: { name: string; percentage: number } | null;
   
     @Column('float')
     buy_margin!: number;
@@ -40,10 +40,13 @@ import {
   
     @Column('float')
     dinariPercentageFee!: number;
-
+  
     @ManyToOne(() => Discount, { nullable: true })
     @JoinColumn({ name: 'discount_Id' })
     discount_Id!: Discount;
+  
+    @Column('float', { default: 0 })
+    juris_discount_applied!: number;
   
     @CreateDateColumn()
     createdAt!: Date;
