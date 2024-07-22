@@ -7,22 +7,17 @@ import {
   ManyToOne,
   JoinColumn
 } from 'typeorm';
-import { Discount } from './discount';
 
 @Entity()
 export class Promotion {
   @PrimaryGeneratedColumn()
   promotion_id!: number;
 
-  @Column('json')
-  promotion_type!: object;
+  @Column()
+  promotion_name!: string;
 
   @Column('float')
   promotion_discount!: number;
-
-  @ManyToOne(() => Discount, { nullable: true })
-  @JoinColumn({ name: 'discount_Id' })
-  discount_Id!: Discount;
 
   @CreateDateColumn()
   createdAt!: Date;
