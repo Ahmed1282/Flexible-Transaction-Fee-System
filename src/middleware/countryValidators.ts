@@ -17,12 +17,11 @@ export const validateCountry = [
       if (!value.name || typeof value.name !== 'string') {
         throw new Error('Country discount must have a name property of type string');
       }
-      if (!value.value || typeof value.value !== 'number') {
+      if (!value.percentage || typeof value.percentage !== 'number') {
         throw new Error('Country discount must have a value property of type number');
       }
       return true;
     }),
-    check('country_discount_applied').isFloat().withMessage('Jurisdiction discount applied must be a float'),
   
   (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);

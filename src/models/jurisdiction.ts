@@ -14,7 +14,7 @@ import {
     @PrimaryGeneratedColumn()
     id!: number;
   
-    @Column()
+    @Column({ unique: true })
     jurisdiction_name!: string;
   
     @Column('float')

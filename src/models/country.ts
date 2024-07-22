@@ -14,7 +14,7 @@ export class Country {
   @PrimaryGeneratedColumn()
   country_id!: number;
 
-  @Column()
+  @Column({ unique: true })
   country_name!: string;
 
   @Column('float')
@@ -43,10 +43,10 @@ export class Country {
 
   @ManyToOne(() => Discount, { nullable: true })
   @JoinColumn({ name: 'discount_Id' })
-  discount_Id!: Discount;
+  discount_Id!: Discount | null;
 
-  @Column('float', { default: 0 })
-  country_discount_applied!: number;
+  @Column('float', { nullable: true })
+  country_discount_applied!: number | null;
 
   @CreateDateColumn()
   createdAt!: Date;
