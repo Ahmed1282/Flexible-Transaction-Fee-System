@@ -12,19 +12,19 @@ export class Billing {
   @Column()
   user_id!: number;  // this will come from the API
 
-  @OneToOne(() => Country, { nullable: true })
+  @ManyToOne(() => Country, { nullable: true })
   @JoinColumn({ name: 'country_id' })
   country!: Country | null;
 
-  @OneToOne(() => Jurisdiction, { nullable: true })
+  @ManyToOne(() => Jurisdiction, { nullable: true })
   @JoinColumn({ name: 'jurisdictions_id' })
   jurisdiction!: Jurisdiction | null;
 
-  @OneToOne(() => Promotion, { nullable: true })
+  @ManyToOne(() => Promotion, { nullable: true })
   @JoinColumn({ name: 'promotion_id' })
   promotion!: Promotion | null;
 
-  @OneToOne(() => Discount, { nullable: true })
+  @ManyToOne(() => Discount, { nullable: true })
   @JoinColumn({ name: 'discount_id' })
   discount!: Discount | null;
 

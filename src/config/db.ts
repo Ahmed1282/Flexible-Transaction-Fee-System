@@ -40,7 +40,7 @@ const AppDataSource = new DataSource({
   database: process.env.DB_NAME,
   entities: [Jurisdiction, Country, Promotion, Discount, Billing],
   synchronize: true,
-  logging: true,
+  logging: false,
 });
 
 export default AppDataSource;

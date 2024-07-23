@@ -5,9 +5,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  JoinColumn
+  JoinColumn,
+  OneToMany
 } from 'typeorm';
 import { Discount } from './discount';
+import { Billing } from './billing'
 
 @Entity()
 export class Country {
@@ -53,6 +55,8 @@ export class Country {
 
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  @OneToMany(() => Billing, billing => billing.country) billings!: Billing[];
 }
 
 export default Country;

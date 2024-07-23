@@ -3,6 +3,7 @@ import BillingController from '../controllers/billingController';
 
 const router = Router();
 
-router.post('/fetchapi', BillingController.fetchBilling);
+// Route to create and fetch billing records
+router.post('/fetchapi', BillingController.createAndFetchBilling);
 
 export default router;
