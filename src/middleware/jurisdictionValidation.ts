@@ -14,7 +14,7 @@ export const validateJurisdiction = [
         throw new Error('Jurisdiction discount must have a name property of type string');
       }
       if (!value.percentage || typeof value.percentage !== 'number') {
-        throw new Error('Jurisdiction discount must have a value property of type number');
+        throw new Error('Jurisdiction discount must have a percentage property of type number');
       }
       return true;
     }),
@@ -23,8 +23,6 @@ export const validateJurisdiction = [
   check('FassetFee').isFloat().withMessage('Fasset Fee must be a float'),
   check('dinariConstantFee').isFloat().withMessage('Dinari Constant Fee must be a float'),
   check('dinariPercentageFee').isFloat().withMessage('Dinari Percentage Fee must be a float'),
- // check('juris_discount_applied').isFloat().withMessage('Jurisdiction discount applied must be a float'),
-  
   (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
