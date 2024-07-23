@@ -10,7 +10,14 @@ class BillingController {
       res.status(500).json({ error: 'Internal Server Error' });
     }
   }
-
+  async fetchBilling(req: Request, res: Response): Promise<void> {
+    try {
+      const billings = await billingService.fetchBilling();
+      res.status(200).json(billings);
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching billing data' });
+    }
+  }
   // Add other methods like getBilling, updateBilling, deleteBilling as needed
 }
 
