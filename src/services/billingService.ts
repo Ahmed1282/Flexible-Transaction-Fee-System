@@ -25,9 +25,9 @@ class BillingService {
       const billings = await this.billingRepository.find({
         relations: ['country', 'jurisdiction', 'promotion', 'discount']
       });
-
-      console.log("Fetched Billings:", billings);
-
+  
+      console.log("Fetched Billings:", JSON.stringify(billings, null, 2));
+  
       return billings.map(billing => {
         if (
           billing.country &&
@@ -71,6 +71,7 @@ class BillingService {
       throw error;
     }
   }
+  
 
   // Add other methods like getBilling, updateBilling, deleteBilling as needed
 }
