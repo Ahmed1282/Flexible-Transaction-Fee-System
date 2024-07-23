@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Country } from './country';
 import { Jurisdiction } from './jurisdiction';
 import { Promotion } from './promotion';
@@ -10,27 +10,39 @@ export class Billing {
   billing_id!: number;
 
   @Column()
-  user_id!: number;  // this will come from the API
+  user_id!: number;
+
+  @Column({ nullable: true })
+  country_id?: number;
 
   @ManyToOne(() => Country, { nullable: true })
   @JoinColumn({ name: 'country_id' })
-  country!: Country | null;
+  country?: Country | null;
+
+  @Column({ nullable: true })
+  jurisdiction_id?: number;
 
   @ManyToOne(() => Jurisdiction, { nullable: true })
-  @JoinColumn({ name: 'jurisdictions_id' })
-  jurisdiction!: Jurisdiction | null;
+  @JoinColumn({ name: 'jurisdiction_id' })
+  jurisdiction?: Jurisdiction | null;
+
+  @Column({ nullable: true })
+  promotion_id?: number;
 
   @ManyToOne(() => Promotion, { nullable: true })
   @JoinColumn({ name: 'promotion_id' })
-  promotion!: Promotion | null;
+  promotion?: Promotion | null;
+
+  @Column({ nullable: true })
+  discount_id?: number;
 
   @ManyToOne(() => Discount, { nullable: true })
   @JoinColumn({ name: 'discount_id' })
-  discount!: Discount | null;
+  discount?: Discount | null;
 
   @Column('float')
   billing_fee!: number;
 
   @Column()
-  event_type!: string;  // will be 'buy' or 'sell' from the URL
+  event_type!: string;
 }

@@ -29,74 +29,82 @@ class BillingService {
     discount_id?: number;
     billing_fee: number;
     event_type: string;
-  }): Promise<Billing[]> {
+  }): Promise<Partial<Billing>[]> {
     try {
-      // Create a new billing record if data is provided
-      if (data) {
-        // Ensure related entities exist
-        const country = data.country_id ? await this.countryRepository.findOne({ where: { country_id: data.country_id } }) : null;
-        const jurisdiction = data.jurisdiction_id ? await this.jurisdictionRepository.findOne({ where: { id: data.jurisdiction_id } }) : null;
-        const promotion = data.promotion_id ? await this.promotionRepository.findOne({ where: { promotion_id: data.promotion_id } }) : null;
-        const discount = data.discount_id ? await this.discountRepository.findOne({ where: { discount_Id: data.discount_id } }) : null;
+      // Ensure related entities exist
+      const country = data.country_id ? await this.countryRepository.findOneBy({ country_id: data.country_id }) : undefined;
+      const jurisdiction = data.jurisdiction_id ? await this.jurisdictionRepository.findOneBy({ id: data.jurisdiction_id }) : undefined;
+      const promotion = data.promotion_id ? await this.promotionRepository.findOneBy({ promotion_id: data.promotion_id }) : undefined;
+      const discount = data.discount_id ? await this.discountRepository.findOneBy({ discount_Id: data.discount_id }) : undefined;
 
-        const billingData: Partial<Billing> = {
-          user_id: data.user_id,
-          country: country || null,
-          jurisdiction: jurisdiction || null,
-          promotion: promotion || null,
-          discount: discount || null,
-          billing_fee: data.billing_fee,
-          event_type: data.event_type
-        };
+      // Prepare billing data
+      const billingData: Partial<Billing> = {
+        user_id: data.user_id,
+        country: country || undefined,
+        jurisdiction: jurisdiction || undefined,
+        promotion: promotion || undefined,
+        discount: discount || undefined,
+        billing_fee: data.billing_fee,
+        event_type: data.event_type
+      };
 
-        await this.createBilling(billingData);
-      }
+      // Create the billing record
+      const createdBilling = await this.createBilling(billingData);
 
-      // Fetch all billing records with relations
-      const billings = await this.billingRepository.find({
+      // Fetch the created billing record by ID
+      const billing = await this.billingRepository.findOne({
+        where: { billing_id: createdBilling.billing_id },
         relations: ['country', 'jurisdiction', 'promotion', 'discount']
       });
 
-      console.log("Fetched Billings (raw):", JSON.stringify(billings, null, 2));
-
-      if (billings.length === 0) {
-        console.log("No records found in the billing table.");
+      if (!billing) {
+        console.log("Billing record not found.");
+        return [];
       }
 
-      const processedBillings = billings.map(billing => {
-        let applied_discount = null;
-        let applied_margin = null;
+      // Process the fetched billing record
+      const processedBilling: {
+        billing_id: number;
+        user_id: number;
+        country_id?: number;
+        jurisdiction_id?: number;
+        promotion_id?: number;
+        discount_id?: number;
+        billing_fee: number;
+        event_type: string;
+        applied_discount?: number;
+        applied_margin?: number;
+      } = {
+        billing_id: billing.billing_id,
+        user_id: billing.user_id,
+        country_id: billing.country?.country_id,
+        jurisdiction_id: billing.jurisdiction?.id,
+        promotion_id: billing.promotion?.promotion_id,
+        discount_id: billing.discount?.discount_Id,
+        billing_fee: billing.billing_fee,
+        event_type: billing.event_type,
+      };
 
-        if (billing.country && billing.jurisdiction) {
-          const countryDiscountApplied = billing.country.country_discount_applied ?? 0;
-          const jurisdictionDiscountApplied = billing.jurisdiction.juris_discount_applied ?? 0;
+      if (billing.country && billing.jurisdiction) {
+        const countryDiscountApplied = billing.country.country_discount_applied ?? 0;
+        const jurisdictionDiscountApplied = billing.jurisdiction.juris_discount_applied ?? 0;
 
-          const { country_buy_margin, country_sell_margin } = billing.country;
-          const { buy_margin, sell_margin } = billing.jurisdiction;
+        const { country_buy_margin, country_sell_margin } = billing.country;
+        const { buy_margin, sell_margin } = billing.jurisdiction;
 
-          if (countryDiscountApplied === 0 && jurisdictionDiscountApplied === 0) {
-            // Take values from jurisdiction
-            applied_discount = jurisdictionDiscountApplied;
-            applied_margin = billing.event_type === 'buy' ? buy_margin : sell_margin;
-          } else if (countryDiscountApplied > jurisdictionDiscountApplied) {
-            // Take values from country
-            applied_discount = countryDiscountApplied;
-            applied_margin = billing.event_type === 'buy' ? country_buy_margin : country_sell_margin;
-          } else {
-            // Take values from jurisdiction
-            applied_discount = jurisdictionDiscountApplied;
-            applied_margin = billing.event_type === 'buy' ? buy_margin : sell_margin;
-          }
+        if (countryDiscountApplied === 0 && jurisdictionDiscountApplied === 0) {
+          processedBilling.applied_discount = jurisdictionDiscountApplied;
+          processedBilling.applied_margin = billing.event_type === 'buy' ? buy_margin : sell_margin;
+        } else if (countryDiscountApplied > jurisdictionDiscountApplied) {
+          processedBilling.applied_discount = countryDiscountApplied;
+          processedBilling.applied_margin = billing.event_type === 'buy' ? country_buy_margin : country_sell_margin;
+        } else {
+          processedBilling.applied_discount = jurisdictionDiscountApplied;
+          processedBilling.applied_margin = billing.event_type === 'buy' ? buy_margin : sell_margin;
         }
+      }
 
-        return {
-          ...billing,
-          applied_discount,
-          applied_margin
-        };
-      });
-
-      return processedBillings.filter(billing => billing.applied_discount !== null && billing.applied_margin !== null);
+      return [processedBilling];
     } catch (error) {
       console.error("Error creating or fetching billings:", error);
       throw error;
