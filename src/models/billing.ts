@@ -19,7 +19,7 @@ export class Billing {
   @JoinColumn({ name: 'country_id' })
   country?: Country | null;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   jurisdiction_id?: number;
 
   @ManyToOne(() => Jurisdiction, { nullable: true })
