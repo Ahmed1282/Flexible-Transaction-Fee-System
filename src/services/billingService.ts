@@ -48,6 +48,38 @@ class BillingService {
         event_type: data.event_type
       };
 
+      // Determine the applied discount and margin
+      let applied_discount: number | undefined;
+      let applied_margin: number | undefined;
+      let applicable_country: Country | undefined;
+      let applicable_jurisdiction: Jurisdiction | undefined;
+
+      if (country && jurisdiction) {
+        const countryDiscountApplied = country.country_discount_applied ?? 0;
+        const jurisdictionDiscountApplied = jurisdiction.juris_discount_applied ?? 0;
+
+        const { country_buy_margin, country_sell_margin } = country;
+        const { buy_margin, sell_margin } = jurisdiction;
+
+        if (countryDiscountApplied === 0 && jurisdictionDiscountApplied === 0) {
+          applied_discount = jurisdictionDiscountApplied;
+          applied_margin = data.event_type === 'buy' ? buy_margin : sell_margin;
+          applicable_jurisdiction = jurisdiction;
+        } else if (countryDiscountApplied > jurisdictionDiscountApplied) {
+          applied_discount = countryDiscountApplied;
+          applied_margin = data.event_type === 'buy' ? country_buy_margin : country_sell_margin;
+          applicable_country = country;
+        } else {
+          applied_discount = jurisdictionDiscountApplied;
+          applied_margin = data.event_type === 'buy' ? buy_margin : sell_margin;
+          applicable_jurisdiction = jurisdiction;
+        }
+      }
+
+      // Set the applied discount and margin
+      billingData.applied_discount = applied_discount;
+      billingData.applied_margin = applied_margin;
+
       // Create the billing record
       const createdBilling = await this.createBilling(billingData);
 
@@ -74,6 +106,8 @@ class BillingService {
         event_type: string;
         applied_discount?: number;
         applied_margin?: number;
+        country?: Country;
+        jurisdiction?: Jurisdiction;
       } = {
         billing_id: billing.billing_id,
         user_id: billing.user_id,
@@ -83,26 +117,11 @@ class BillingService {
         discount_id: billing.discount?.discount_Id,
         billing_fee: billing.billing_fee,
         event_type: billing.event_type,
+        applied_discount: billing.applied_discount,
+        applied_margin: billing.applied_margin,
+        country: applicable_country,
+        jurisdiction: applicable_jurisdiction
       };
-
-      if (billing.country && billing.jurisdiction) {
-        const countryDiscountApplied = billing.country.country_discount_applied ?? 0;
-        const jurisdictionDiscountApplied = billing.jurisdiction.juris_discount_applied ?? 0;
-
-        const { country_buy_margin, country_sell_margin } = billing.country;
-        const { buy_margin, sell_margin } = billing.jurisdiction;
-
-        if (countryDiscountApplied === 0 && jurisdictionDiscountApplied === 0) {
-          processedBilling.applied_discount = jurisdictionDiscountApplied;
-          processedBilling.applied_margin = billing.event_type === 'buy' ? buy_margin : sell_margin;
-        } else if (countryDiscountApplied > jurisdictionDiscountApplied) {
-          processedBilling.applied_discount = countryDiscountApplied;
-          processedBilling.applied_margin = billing.event_type === 'buy' ? country_buy_margin : country_sell_margin;
-        } else {
-          processedBilling.applied_discount = jurisdictionDiscountApplied;
-          processedBilling.applied_margin = billing.event_type === 'buy' ? buy_margin : sell_margin;
-        }
-      }
 
       return [processedBilling];
     } catch (error) {

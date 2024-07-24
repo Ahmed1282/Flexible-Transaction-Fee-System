@@ -45,4 +45,10 @@ export class Billing {
 
   @Column()
   event_type!: string;
+
+  @Column('float', { nullable: true })
+  applied_discount?: number;
+
+  @Column('float', { nullable: true })
+  applied_margin?: number;
 }
