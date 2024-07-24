@@ -29,8 +29,25 @@ class BillingService {
     discount_id?: number;
     billing_fee: number;
     event_type: string;
-  }): Promise<Partial<Billing>[]> {
+  }): Promise<Billing[]> {
     try {
+      // Create a new billing record if data is provided
+      if (data) {
+        // Ensure related entities exist
+        const country = data.country_id ? await this.countryRepository.findOne({ where: { country_id: data.country_id } }) : null;
+        const jurisdiction = data.jurisdiction_id ? await this.jurisdictionRepository.findOne({ where: { id: data.jurisdiction_id } }) : null;
+        const promotion = data.promotion_id ? await this.promotionRepository.findOne({ where: { promotion_id: data.promotion_id } }) : null;
+        const discount = data.discount_id ? await this.discountRepository.findOne({ where: { discount_Id: data.discount_id } }) : null;
+
+        const billingData: Partial<Billing> = {
+          user_id: data.user_id,
+          country: country || null,
+          jurisdiction: jurisdiction || null,
+          promotion: promotion || null,
+          discount: discount || null,
+          billing_fee: data.billing_fee,
+          event_type: data.event_type
+        };
       // Ensure related entities exist
       const country = data.country_id ? await this.countryRepository.findOneBy({ country_id: data.country_id }) : undefined;
       const jurisdiction = data.jurisdiction_id ? await this.jurisdictionRepository.findOneBy({ id: data.jurisdiction_id }) : undefined;
@@ -83,9 +100,8 @@ class BillingService {
       // Create the billing record
       const createdBilling = await this.createBilling(billingData);
 
-      // Fetch the created billing record by ID
-      const billing = await this.billingRepository.findOne({
-        where: { billing_id: createdBilling.billing_id },
+      // Fetch all billing records with relations
+      const billings = await this.billingRepository.find({
         relations: ['country', 'jurisdiction', 'promotion', 'discount']
       });
 
