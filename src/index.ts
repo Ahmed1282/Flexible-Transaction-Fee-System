@@ -6,7 +6,7 @@ import {Promotion} from './models/promotion';
 import { Jurisdiction } from './models/jurisdiction';// Ensure the path is correct
 import countryRoutes from './routes/countryRoute';
 import jurisdictionRoutes from './routes/jurisdictionRoutes';
-//import billingRoutes from './routes/billlingRoute';
+import billingRoutes from './routes/billlingRoute';
 import promotionRoutes from './routes/promotionRoute';
 import discountRoutes from './routes/discountRoutes'
 import dotenv from 'dotenv';
@@ -39,7 +39,7 @@ AppDataSource.initialize()
     app.use('/country', countryRoutes);
     app.use('/promotions', promotionRoutes);
     app.use('/discounts', discountRoutes);
-   // app.use('/billing', billingRoutes);
+    app.use('/billing', billingRoutes);
 
     app.get('/', (req, res) => {
       res.send('Hello, World!');

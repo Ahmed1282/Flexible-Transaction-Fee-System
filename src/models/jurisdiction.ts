@@ -33,12 +33,12 @@ export class Jurisdiction {
   @Column('float')
   dinariPercentageFee!: number;
   @ManyToOne(() => Discount, { nullable: true })
-  @JoinColumn({ name: 'discount_Id' })
-  discount_Id!: Discount;
-  @Column('float', { default: 0 })
-  juris_discount_applied!: number;
-  @OneToMany(() => Billing, billing => billing.jurisdiction)
-  billings!: Billing[];
+//   @JoinColumn({ name: 'discount_Id' })
+//   discount_Id!: Discount;
+//   @Column('float', { default: 0 })
+//   juris_discount_applied!: number;
+//   @OneToMany(() => Billing, billing => billing.jurisdiction)
+//   billings!: Billing[];
   @CreateDateColumn()
   createdAt!: Date;
   @UpdateDateColumn()
