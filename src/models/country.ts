@@ -8,7 +8,6 @@ import {
   JoinColumn,
   OneToMany
 } from 'typeorm';
-import { Discount } from './discount';
 import { Billing } from './billing'
 
 @Entity()
@@ -42,13 +41,6 @@ export class Country {
 
   @Column('float')
   country_dinariPercentageFee!: number;
-
-  @ManyToOne(() => Discount, { nullable: true })
-  @JoinColumn({ name: 'discount_Id' })
-  discount_Id!: Discount | null;
-
-  @Column('float', { nullable: true })
-  country_discount_applied!: number | null;
 
   @CreateDateColumn()
   createdAt!: Date;
