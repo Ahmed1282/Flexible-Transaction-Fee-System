@@ -16,17 +16,17 @@ export class JurisdictionService {
 
   async createJurisdiction(data: Partial<Jurisdiction>): Promise<Jurisdiction> {
     const jurisdiction = this.jurisdictionRepository.create(data);
-    const discount = await this.discountRepository.findOneBy({ discount_Id: data.discount_Id?.discount_Id });
+    // const discount = await this.discountRepository.findOneBy({ discount_Id: data.discount_Id?.discount_Id });
 
-    if (discount && data.jurisdiction_discount) {
-      jurisdiction.juris_discount_applied = Math.max(discount.discount_percentage, data.jurisdiction_discount.percentage);
-    } else if (discount) {
-      jurisdiction.juris_discount_applied = discount.discount_percentage;
-    } else if (data.jurisdiction_discount) {
-      jurisdiction.juris_discount_applied = data.jurisdiction_discount.percentage;
-    } else {
-      jurisdiction.juris_discount_applied = 0;
-    }
+    // if (discount && data.jurisdiction_discount) {
+    //   jurisdiction.juris_discount_applied = Math.max(discount.discount_percentage, data.jurisdiction_discount.percentage);
+    // } else if (discount) {
+    //   jurisdiction.juris_discount_applied = discount.discount_percentage;
+    // } else if (data.jurisdiction_discount) {
+    //   jurisdiction.juris_discount_applied = data.jurisdiction_discount.percentage;
+    // } else {
+    //   jurisdiction.juris_discount_applied = 0;
+    // }
 
     return this.jurisdictionRepository.save(jurisdiction);
   }
@@ -36,17 +36,17 @@ export class JurisdictionService {
     if (jurisdiction) {
       this.jurisdictionRepository.merge(jurisdiction, data);
 
-      const discount = await this.discountRepository.findOneBy({ discount_Id: data.discount_Id?.discount_Id });
+      // const discount = await this.discountRepository.findOneBy({ discount_Id: data.discount_Id?.discount_Id });
 
-      if (discount && data.jurisdiction_discount) {
-        jurisdiction.juris_discount_applied = Math.min(discount.discount_percentage, data.jurisdiction_discount.percentage);
-      } else if (discount) {
-        jurisdiction.juris_discount_applied = discount.discount_percentage;
-      } else if (data.jurisdiction_discount) {
-        jurisdiction.juris_discount_applied = data.jurisdiction_discount.percentage;
-      } else {
-        jurisdiction.juris_discount_applied = 0;
-      }
+      // if (discount && data.jurisdiction_discount) {
+      //   jurisdiction.juris_discount_applied = Math.min(discount.discount_percentage, data.jurisdiction_discount.percentage);
+      // } else if (discount) {
+      //   jurisdiction.juris_discount_applied = discount.discount_percentage;
+      // } else if (data.jurisdiction_discount) {
+      //   jurisdiction.juris_discount_applied = data.jurisdiction_discount.percentage;
+      // } else {
+      //   jurisdiction.juris_discount_applied = 0;
+      // }
 
       return this.jurisdictionRepository.save(jurisdiction);
     }
