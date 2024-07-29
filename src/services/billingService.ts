@@ -53,7 +53,15 @@ class BillingService {
         { entity: 'Discount', value: discount?.discount_percentage ?? 0 }
       ];
 
-      const maxDiscount = discountPercentages.reduce((prev, current) => (prev.value > current.value) ? prev : current);
+      // Custom reduce function to prefer jurisdiction in case of equal values
+      const maxDiscount = discountPercentages.reduce((prev, current) => {
+        if (current.value > prev.value) {
+          return current;
+        } else if (current.value === prev.value && current.entity === 'Jurisdiction') {
+          return current;
+        }
+        return prev;
+      }, discountPercentages[0]);
 
       switch (maxDiscount.entity) {
         case 'Country':
