@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
 import AppDataSource from '../config/db';
-import Country from '../models/country';
+import {Country} from '../models/country';
 
 class CountryService {
   private countryRepository: Repository<Country>;

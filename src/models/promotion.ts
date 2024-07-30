@@ -4,25 +4,26 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
-  JoinColumn
+  OneToMany
 } from 'typeorm';
-import { Discount } from './discount';
+import { Billing } from './billing';
 
 @Entity()
 export class Promotion {
   @PrimaryGeneratedColumn()
   promotion_id!: number;
 
-  @Column('json')
-  promotion_type!: object;
+  @Column()
+  promotion_name!: string;
 
-  @Column('float')
-  promotion_discount!: number;
+  @Column({ type: 'float', nullable: true })
+  promotion_discount?: number;
 
-  @ManyToOne(() => Discount, { nullable: true })
-  @JoinColumn({ name: 'discount_Id' })
-  discount_Id!: Discount;
+  @Column({ type: 'float', nullable: true })
+  promotion_margin?: number;
+
+  @OneToMany(() => Billing, billing => billing.promotion)
+  billings!: Billing[];
 
   @CreateDateColumn()
   createdAt!: Date;

@@ -5,16 +5,17 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  JoinColumn
+  JoinColumn,
+  OneToMany
 } from 'typeorm';
-import { Discount } from './discount';
+import { Billing } from './billing'
 
 @Entity()
 export class Country {
   @PrimaryGeneratedColumn()
   country_id!: number;
 
-  @Column()
+  @Column({ unique: true })
   country_name!: string;
 
   @Column('float')
@@ -24,7 +25,7 @@ export class Country {
   country_tax!: number;
 
   @Column('json', { nullable: true })
-  country_discount!: object;
+  country_discount!: { name: string; percentage: number } | null;
 
   @Column('float')
   country_buy_margin!: number;
@@ -41,15 +42,13 @@ export class Country {
   @Column('float')
   country_dinariPercentageFee!: number;
 
-  @ManyToOne(() => Discount, { nullable: true })
-  @JoinColumn({ name: 'discount_Id' })
-  discount_Id!: Discount;
-
   @CreateDateColumn()
   createdAt!: Date;
 
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  @OneToMany(() => Billing, billing => billing.country) billings!: Billing[];
 }
 
 export default Country;
