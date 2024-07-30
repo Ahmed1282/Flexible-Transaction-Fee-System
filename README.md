@@ -117,6 +117,5 @@ As an administrator, I want to configure flexible transaction fees for various e
 ## Technical Architecture
 
 ### Components
-- **Frontend**: User interface for administrators to configure fees.
 - **Backend**: Fee management engine responsible for applying configured fee structures.
 - **Database**: Stores fee configuration data and transaction history.
