@@ -37,22 +37,22 @@ class BillingService {
       const jurisdiction = data.jurisdiction_id ? await this.jurisdictionRepository.findOneBy({ id: data.jurisdiction_id }) : undefined;
       const promotion = data.promotion_id ? await this.promotionRepository.findOneBy({ promotion_id: data.promotion_id }) : undefined;
       const discount = data.discount_id ? await this.discountRepository.findOneBy({ discount_Id: data.discount_id }) : undefined;
-
+  
       if (!jurisdiction) {
         throw new Error("Jurisdiction is required.");
       }
-
+  
       let appliedDiscount: number | undefined = undefined;
       let appliedMargin: number | undefined = undefined;
       let appliedEntity: 'Country' | 'Jurisdiction' | 'Promotion' | 'Discount' | null = null;
-
+  
       const discountPercentages = [
         { entity: 'Country', value: country?.country_discount?.percentage ?? 0 },
         { entity: 'Jurisdiction', value: jurisdiction.jurisdiction_discount?.percentage ?? 0 },
         { entity: 'Promotion', value: promotion?.promotion_discount ?? 0 },
         { entity: 'Discount', value: discount?.discount_percentage ?? 0 }
       ];
-
+  
       // Custom reduce function to prefer jurisdiction in case of equal values
       const maxDiscount = discountPercentages.reduce((prev, current) => {
         if (current.value > prev.value) {
@@ -62,7 +62,7 @@ class BillingService {
         }
         return prev;
       }, discountPercentages[0]);
-
+  
       switch (maxDiscount.entity) {
         case 'Country':
           appliedDiscount = maxDiscount.value;
@@ -95,6 +95,30 @@ class BillingService {
           appliedEntity = 'Jurisdiction';
           break;
       }
+      
+        // Handle promotion ID 10 logic
+        if (data.promotion_id === 10 && promotion) {
+          if (appliedEntity === 'Country') {
+            appliedMargin = data.event_type === 'buy' ? country!.country_buy_margin : country!.country_sell_margin
+            appliedDiscount = promotion.promotion_discount;
+          } else if (appliedEntity === 'Jurisdiction') {
+            appliedMargin = data.event_type === 'buy' ? jurisdiction.buy_margin : jurisdiction.sell_margin;
+            appliedDiscount = promotion.promotion_discount;
+          }
+          appliedEntity = 'Country';
+        }
+  
+
+      // for promotion 3 only
+      if (promotion!.promotion_margin != null && promotion) {
+        // Adjust the margin based on the promotion's discount
+        if (appliedEntity === 'Country') {
+          appliedMargin = data.event_type === 'buy' ? promotion.promotion_margin : promotion.promotion_margin;
+        } else if (appliedEntity === 'Jurisdiction') {
+          appliedMargin = data.event_type === 'bull' ? promotion.promotion_margin : promotion.promotion_margin;
+        }
+      }
+      
 
       const billingData: Partial<Billing> = {
         user_id: data.user_id,
@@ -108,21 +132,21 @@ class BillingService {
         applied_discount: appliedDiscount,
         applied_margin: appliedMargin
       };
-
+  
       // Create the billing record
       const createdBilling = await this.createBilling(billingData);
-
+  
       // Fetch the created billing record by ID
       const billing = await this.billingRepository.findOne({
         where: { billing_id: createdBilling.billing_id },
         relations: ['country', 'jurisdiction', 'promotion', 'discount']
       });
-
+  
       if (!billing) {
         console.log("Billing record not found.");
         return null;
       }
-
+  
       // Return only the relevant entity based on applied discount
       const response: {
         billing_id: number;
@@ -152,7 +176,7 @@ class BillingService {
         applied_discount: billing.applied_discount,
         applied_margin: billing.applied_margin,
       };
-
+  
       // Conditionally add properties
       if (appliedEntity === 'Country') {
         response.country = billing.country!;
@@ -161,13 +185,14 @@ class BillingService {
       } else if (appliedEntity === 'Promotion') {
         response.promotion = billing.promotion!;
       }
-
+  
       return response;
     } catch (error) {
       console.error("Error creating or fetching billings:", error);
       throw error;
     }
   }
+  
 
   private async createBilling(data: Partial<Billing>): Promise<Billing> {
     const billing = this.billingRepository.create(data);
